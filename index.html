@@ -12,7 +12,7 @@
             <link rel="stylesheet" href="fonts/fontawesome-free-6.6.0-web/css/all.css">
             <link rel="manifest" href="manifest.json">
         </head>
-        <body>
+        <body onload="requestNotificationPermission();">
             <H1>Convertidor de Temperatura</H1>
             <form id="converter">
                 <label for="input-temp">Temperatura:</label>
@@ -33,7 +33,12 @@
                 </select>
                 <output name="output-temp" id="output-temp" for="input-temp input-unit output-unit">68 F</output>
             </form>
+
+            <button class="btn btn1" onclick="recordVideo();" id="recording-button"><i class="fa fa-circle"></i></button>
+            <video class="animate done" controls="true" id="video-element"></video>
+
             <script src="js/converter.js"></script>
+            <script src="js/externals.js"></script>
             <script>
                 if('serviceWorker' in Navigator){
                     navigator.serviceWorker.register('sw.js',{scope:'./'});
