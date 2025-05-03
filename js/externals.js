@@ -27,7 +27,7 @@ async function recordVideo(){
         
         let chunks = [];
         window.recorder.ondataavailable = function(event){
-            if (event.data.size <= 0){
+            if (event.data.size > 0){
                 chunks.push(event.data);
             }
         };
@@ -54,17 +54,19 @@ async function recordVideo(){
 
 function geolocalizacion(){
     if(navigator.permission && navigator.permissions.query){
-        navigator.permission.query({name:'geolocation'}).then(function(result){
+        navigator.permissions.query({name:'geolocation'}).then(function(result){
             const permission = result.state;
             if(permission === 'granted' || permission === 'prompt'){
                 _onGetCurrentLocation();
             }
         });
+    }else if(navigator.geolocation){
+        _onGetCurrentLocation();
     }
 }
 
 function _onGetCurrentLocation(){
-    const option = {
+    const options = {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0
@@ -117,13 +119,13 @@ const init = () =>{
         return `${horas}:${minutos}:${numeroDeSegundos}`;
     }
 
-    let tiempoInicio,mediaRecorder,idIntervalo;
+    let tiempoInicion,mediaRecorder,idIntervalo;
     const refrescar = () =>{
-        $duracion.textContent = segundosATiempo( (Date.now - tiempoInicio) / 1000);
+        $duracion.textContent = segundosATiempo( (Date.now - tiempoInicion) / 1000);
     }
     const llenarLista = () =>{
         navigator.mediaDevices.enumerateDevices().then(dispositivos =>{
-            limpiearSelect();
+            limpiarSelect();
             dispositivos.forEach((dispositivos,indice)=>{
                 if(dispositivos.kind === "audioinput"){
                     const $opcion = document.createElement("option");
@@ -135,8 +137,8 @@ const init = () =>{
         })
     };
 
-    const comenzaAContar = () =>{
-        tiempoInicio = Date.now();
+    const comenzarAContar = () =>{
+        tiempoInicion = Date.now();
             idIntervalo = setInterval(refrescar,500);
     }
 
@@ -176,7 +178,7 @@ const init = () =>{
 
     const detenerConteo = () =>{
         clearInterval(idIntervalo);
-        tiempoInicio = null;
+        tiempoInicion = null;
         $duracion.textContent = "";
     }
 
